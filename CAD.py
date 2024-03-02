@@ -33,11 +33,10 @@ class UserPointer():
 player = UserPointer()
 
 def pos_to_snap(pos):
-    ## 35 = 30, 15 = 10
-    ## PX_PER_IN / 2
-    # return pos[0] % 
-    # PX_PER_IN
-    pass
+    new_pos = (pos[0]-PX_PER_IN/2, pos[1]-PX_PER_IN/2)
+    new_pos = (round(new_pos[0] / PX_PER_IN) * PX_PER_IN, round(new_pos[1] / PX_PER_IN) * PX_PER_IN)
+    new_pos = (new_pos[0]+PX_PER_IN/2, new_pos[1]+PX_PER_IN/2)
+    return new_pos
 
 while running:
     # process input
@@ -50,10 +49,10 @@ while running:
         if event.type == MOUSEBUTTONDOWN:
             player.clicking = True
             if len(player.currentNodes) == 0:
-                player.currentNodes.append(pygame.mouse.get_pos())
+                player.currentNodes.append(player.pos)
             else:
-                if not player.currentNodes[len(player.currentNodes)-1] == pygame.mouse.get_pos():
-                    player.currentNodes.append(pygame.mouse.get_pos())
+                if not player.currentNodes[len(player.currentNodes)-1] == player.pos:
+                    player.currentNodes.append(player.pos)
                 else:
                     shapes_list.append(player.currentNodes)
                     player.currentNodes = []
@@ -62,7 +61,7 @@ while running:
             player.clicking = False
 
     # update code
-    player.set_pos(pygame.mouse.get_pos())
+    player.set_pos(pos_to_snap(pygame.mouse.get_pos()))
 
     # render
     screen.fill((0, 0, 50))
