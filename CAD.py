@@ -64,6 +64,12 @@ class UserPointer():
 
 player = UserPointer()
 
+def pos_to_snap(pos):
+    new_pos = (pos[0]-PX_PER_IN/2, pos[1]-PX_PER_IN/2)
+    new_pos = (round(new_pos[0] / PX_PER_IN) * PX_PER_IN, round(new_pos[1] / PX_PER_IN) * PX_PER_IN)
+    new_pos = (new_pos[0]+PX_PER_IN/2, new_pos[1]+PX_PER_IN/2)
+    return new_pos
+
 while running:
     # process input
     events = pygame.event.get()
@@ -76,10 +82,10 @@ while running:
         if event.type == MOUSEBUTTONDOWN:
             player.clicking = True
             if len(player.currentNodes) == 0:
-                player.currentNodes.append(pygame.mouse.get_pos())
+                player.currentNodes.append(player.pos)
             else:
-                if not player.currentNodes[len(player.currentNodes)-1] == pygame.mouse.get_pos():
-                    player.currentNodes.append(pygame.mouse.get_pos())
+                if not player.currentNodes[len(player.currentNodes)-1] == player.pos:
+                    player.currentNodes.append(player.pos)
                 else:
                     shapes_list.append(player.currentNodes)
                     player.currentNodes = []
@@ -88,14 +94,17 @@ while running:
             player.clicking = False
 
     # update code
-    player.set_pos(pygame.mouse.get_pos())
+    player.set_pos(pos_to_snap(pygame.mouse.get_pos()))
 
     # render
     screen.fill((0, 0, 50))
-    # i, j = 0, 0
-    # while i < SCREEN_WIDTH:
-    #     while j < SCREEN_HEIGHT:
-    #         pass
+    i, j = 0, 0
+    while i < SCREEN_WIDTH:
+        i += PX_PER_IN
+        j = 0
+        while j < SCREEN_HEIGHT:
+            j += PX_PER_IN
+            pygame.draw.circle(screen, (255, 255, 255), (i-PX_PER_IN/2, j-PX_PER_IN/2), 2)
 
     pygame.draw.circle(
         screen,
@@ -107,7 +116,9 @@ while running:
         pygame.draw.lines(screen, (255, 255, 255), False, player.currentNodes, 10)
     for shape in shapes_list:
         pygame.draw.lines(screen, (255, 255, 0), False, shape, 10)
-    
+    if len(player.currentNodes) > 0:
+        pygame.draw.line(screen, (255, 255, 255), player.currentNodes[len(player.currentNodes)-1], player.pos, 10)
+    pygame.display.flip()
     # Aricks Code
     # Git Blame
     super_UI()
