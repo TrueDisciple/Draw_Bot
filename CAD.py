@@ -140,9 +140,7 @@ line_tool = Button(
     inactiveColour=(190,170,190),  # Colour of button when not being interacted with
     hoverColour=(100, 150, 150),  # Colour of button when being hovered over
     pressedColour=(100, 200, 200),  # Colour of button when being clicked
-    onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
-
-
+    onClick=lambda: player.set_tool('line')  # Function to call when clicked on
 )
 
 box_tool = Button(
@@ -157,8 +155,7 @@ box_tool = Button(
     inactiveColour=(190,170,190),  # Colour of button when not being interacted with
     hoverColour=(100, 150, 150),  # Colour of button when being hovered over
     pressedColour=(100, 200, 200),  # Colour of button when being clicked
-    onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
-
+    onClick=lambda: player.set_tool('box')  # Function to call when clicked on
 )
 
 circle_tool = Button(
@@ -173,9 +170,7 @@ circle_tool = Button(
     inactiveColour=(190,170,190),  # Colour of button when not being interacted with
     hoverColour=(100, 150, 150),  # Colour of button when being hovered over
     pressedColour=(100, 200, 200),  # Colour of button when being clicked
-    onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
-
-
+    onClick=lambda: player.set_tool('circle')  # Function to call when clicked on
 )
 
 arc_tool = Button(
@@ -190,9 +185,7 @@ arc_tool = Button(
     inactiveColour=(190,170,190),  # Colour of button when not being interacted with
     hoverColour=(100, 150, 150),  # Colour of button when being hovered over
     pressedColour=(100, 200, 200),  # Colour of button when being clicked
-    onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
-
-
+    onClick=lambda: player.set_tool('arc')  # Function to call when clicked on
 )
 
 star_tool = Button(
@@ -207,9 +200,7 @@ star_tool = Button(
     inactiveColour=(190,170,190),  # Colour of button when not being interacted with
     hoverColour=(100, 150, 150),  # Colour of button when being hovered over
     pressedColour=(100, 200, 200),  # Colour of button when being clicked
-    onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
-
-
+    onClick=lambda: player.set_tool('star')   # Function to call when clicked on
 )
 
 
