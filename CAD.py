@@ -27,7 +27,7 @@ TOP_BAR = 70
 PX_PER_IN = 15
 
 shapes_list = []
-disable_grid = [pygame.Rect(0, 0, 500, 70)] # first entry from super_UI
+disable_grid = [pygame.Rect(0, 0, 1000, 70), pygame.Rect(0, 0, 140, 600)] # first entry from super_UI
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 running = True
 
