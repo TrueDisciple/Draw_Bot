@@ -1,5 +1,6 @@
 import pygame
 import pygame_widgets as pw
+import GenCommands 
 from pygame_widgets.button import Button
 
 from pygame.locals import (
@@ -48,7 +49,7 @@ new_screen_but = Button(
         hoverColour=(100, 150, 150),  # Colour of button when being hovered over
         pressedColour=(100, 200, 200),  # Colour of button when being clicked
         radius=20,  # Radius of border corners (leave empty for not curved)
-        onClick=lambda: print('Click')  # Function to call when clicked on
+        onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
     )
     
 
@@ -118,7 +119,6 @@ while running:
         pygame.draw.lines(screen, (255, 255, 0), False, shape, 10)
     if len(player.currentNodes) > 0:
         pygame.draw.line(screen, (255, 255, 255), player.currentNodes[len(player.currentNodes)-1], player.pos, 10)
-    pygame.display.flip()
     # Aricks Code
     # Git Blame
     super_UI()
