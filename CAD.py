@@ -2,6 +2,8 @@ import pygame
 import pygame_widgets as pw
 import GenCommands 
 from pygame_widgets.button import Button
+from pygame_widgets.textbox import TextBox
+import math
 
 from pygame.locals import (
     K_UP,
@@ -25,6 +27,7 @@ TOP_BAR = 70
 PX_PER_IN = 15
 
 shapes_list = []
+disable_grid = [pygame.Rect(0, 0, 500, 70)] # first entry from super_UI
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 running = True
 
@@ -209,6 +212,9 @@ class UserPointer():
         self.pos = pygame.mouse.get_pos()
         self.clicking = False
         self.currentNodes = []
+        self.disable = False
+        self.type = "ARC" # "LINE", "ARC"
+        self.arcNodes = []
         self.activeTool = 'line'
 
     def set_pos(self, mouse_pos):
@@ -225,6 +231,54 @@ def pos_to_snap(pos):
     new_pos = (new_pos[0]+PX_PER_IN/2, new_pos[1]+PX_PER_IN/2)
     return new_pos
 
+def transform(point1, point2, transformed):
+    p1v = pygame.math.Vector2(point1)
+    p2v = pygame.math.Vector2(point2)
+    tv = pygame.math.Vector2(transformed)
+    p1v = p1v - pygame.math.Vector2(point1) 
+    p2v = p2v - pygame.math.Vector2(point1) 
+    tv = tv - pygame.math.Vector2(point1) 
+    line_angle = (p2v-p1v).angle_to(pygame.math.Vector2(1,0))
+    rotated = (tv.rotate(line_angle))
+    return (rotated[0], rotated[1])
+
+def transform_back(point1, point2, transformed):
+    p1v = pygame.math.Vector2(point1)
+    p2v = pygame.math.Vector2(point2)
+    tv = pygame.math.Vector2(transformed)
+    p1v = p1v - pygame.math.Vector2(point1) 
+    p2v = p2v - pygame.math.Vector2(point1) 
+    line_angle = (p2v-p1v).angle_to(pygame.math.Vector2(1,0))
+    rotated = (tv.rotate(-line_angle))
+    rotated = rotated + pygame.math.Vector2(point1) 
+    return (rotated[0], rotated[1])
+
+def genArcPoints(point1, point2, top):
+    new_point1 = transform(point1, point2, point1)
+    new_point2 = transform(point1, point2, point2)
+    new_top = transform(point1, point2, top)
+    new_top = ((new_point2[0]/2), new_top[1])
+    newNodes = []
+    divisions = 10
+    rounding = 1.5
+    for i in range(1,divisions):
+        newNodes.append((
+            i * (new_point2[0]/2)/divisions,
+            new_top[1] * (((rounding ** i) - 1) / (rounding ** i))
+        ))
+    newNodes.append((
+        (new_point2[0]/2),
+        new_top[1] * (((rounding ** divisions) - 1) / (rounding ** divisions))
+    ))
+    for i in range(1,divisions):
+        newNodes.append((
+            (i * (new_point2[0]/2)/divisions) + (new_point2[0]/2),
+            new_top[1] * (((rounding ** (divisions-i)) - 1) / (rounding ** (divisions-i)))
+        ))
+    allNodes = [new_point1] + newNodes + [new_point2]
+    allNodes = [transform_back(point1, point2, i) for i in allNodes]
+    return allNodes
+
 while running:
     # process input
     events = pygame.event.get()
@@ -234,24 +288,55 @@ while running:
                 running = False
         elif event.type == QUIT:
             running = False
-        if event.type == MOUSEBUTTONDOWN:
+        if event.type == MOUSEBUTTONDOWN and not player.disable:
             player.clicking = True
+            # LINE will be the only one to connect between different clicks for now maybe.
+            # Others will use different data structures besides the currentNodes.
+            # Or might also just have it so that it still just saves to lines but parses
+            # the entire curve as lines in the current nodes list itself.
             if player.pos[0] < SIDE_BAR or player.pos[1] < TOP_BAR:
                 pass
-            elif len(player.currentNodes) == 0:
-                player.currentNodes.append(player.pos)
-            else:
-                if not player.currentNodes[len(player.currentNodes)-1] == player.pos:
+
+            elif player.type == "ARC":
+                if len(player.arcNodes) == 0:
+                    player.arcNodes.append(player.pos)
+                elif len(player.arcNodes) == 1:
+                    player.arcNodes.append(player.pos)
+                elif len(player.arcNodes) > 1:
+                    # parse the arc into lines and add to current nodes
+                    # add to shape if double click at same position
+                    # clear arc nodes also
+                    shapes_list.append(player.arcNodes)
+                    player.arcNodes = []
+
+            elif player.type == "LINE":
+                if len(player.currentNodes) == 0:
                     player.currentNodes.append(player.pos)
                 else:
-                    shapes_list.append(player.currentNodes)
-                    player.currentNodes = []
+                    if not player.currentNodes[len(player.currentNodes)-1] == player.pos:
+                        player.currentNodes.append(player.pos)
+                    else:
+                        shapes_list.append(player.currentNodes)
+                        player.currentNodes = []
 
         if event.type == MOUSEBUTTONUP:
             player.clicking = False
 
     # update code
     player.set_pos(pos_to_snap(pygame.mouse.get_pos()))
+    player.disable = False
+    for rect in disable_grid:
+        if rect.collidepoint(pygame.mouse.get_pos()):
+            player.disable = True
+
+    if len(player.arcNodes) >= 2:
+        player.arcNodes = genArcPoints(player.arcNodes[0], player.arcNodes[len(player.arcNodes)-1], player.pos)
+        # player.arcNodes = [player.arcNodes[0], pygame.mouse.get_pos(), player.arcNodes[len(player.arcNodes)-1]]
+
+    if player.activeTool == "arc":
+        player.type = "ARC"
+    if player.activeTool == "line":
+        player.type = "LINE"
 
     # render
     screen.fill((255, 253, 238))
@@ -269,13 +354,17 @@ while running:
         player.pos,
         7
     )
-    if(len(player.currentNodes) >= 2):
+    if len(player.currentNodes) >= 2:
         pygame.draw.lines(screen, (10, 10, 10), False, player.currentNodes, 10)
+    if len(player.arcNodes) == 1:
+        pygame.draw.line(screen, (10, 10, 10), player.arcNodes[len(player.arcNodes)-1], player.pos, 10)
+    if len(player.arcNodes) > 1:
+        pygame.draw.lines(screen, (10, 10, 10), False, player.arcNodes, 10)
     for shape in shapes_list:
         if len(shape) < 2:
             continue
         pygame.draw.lines(screen, (120, 120, 90), False, shape, 10)
-    if len(player.currentNodes) > 0:
+    if len(player.currentNodes) > 0 and not player.disable:
         pygame.draw.line(screen, (10, 10, 10), player.currentNodes[len(player.currentNodes)-1], player.pos, 10)
     # Aricks Code
     # Git Blame
