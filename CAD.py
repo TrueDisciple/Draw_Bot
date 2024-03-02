@@ -333,6 +333,11 @@ while running:
         player.arcNodes = genArcPoints(player.arcNodes[0], player.arcNodes[len(player.arcNodes)-1], player.pos)
         # player.arcNodes = [player.arcNodes[0], pygame.mouse.get_pos(), player.arcNodes[len(player.arcNodes)-1]]
 
+    if player.activeTool == "arc":
+        player.type = "ARC"
+    if player.activeTool == "line":
+        player.type = "LINE"
+
     # render
     screen.fill((255, 253, 238))
     i, j = SIDE_BAR, TOP_BAR
@@ -350,17 +355,17 @@ while running:
         7
     )
     if len(player.currentNodes) >= 2:
-        pygame.draw.lines(screen, (255, 255, 255), False, player.currentNodes, 10)
+        pygame.draw.lines(screen, (10, 10, 10), False, player.currentNodes, 10)
     if len(player.arcNodes) == 1:
-        pygame.draw.line(screen, (255, 255, 255), player.arcNodes[len(player.arcNodes)-1], player.pos, 10)
+        pygame.draw.line(screen, (10, 10, 10), player.arcNodes[len(player.arcNodes)-1], player.pos, 10)
     if len(player.arcNodes) > 1:
-        pygame.draw.lines(screen, (255, 255, 0), False, player.arcNodes, 10)
+        pygame.draw.lines(screen, (10, 10, 10), False, player.arcNodes, 10)
     for shape in shapes_list:
         if len(shape) < 2:
             continue
-        pygame.draw.lines(screen, (255, 255, 0), False, shape, 10)
+        pygame.draw.lines(screen, (120, 120, 90), False, shape, 10)
     if len(player.currentNodes) > 0 and not player.disable:
-        pygame.draw.line(screen, (255, 255, 255), player.currentNodes[len(player.currentNodes)-1], player.pos, 10)
+        pygame.draw.line(screen, (10, 10, 10), player.currentNodes[len(player.currentNodes)-1], player.pos, 10)
     # Aricks Code
     # Git Blame
     super_UI()
