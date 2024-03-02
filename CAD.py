@@ -2,6 +2,7 @@ import pygame
 import pygame_widgets as pw
 import GenCommands 
 from pygame_widgets.button import Button
+from pygame_widgets.textbox import TextBox
 
 from pygame.locals import (
     K_UP,
@@ -16,10 +17,11 @@ from pygame.locals import (
 )
 
 pygame.init()
+pygame.font.init()
 
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 500
-PX_PER_IN = 20
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 600
+PX_PER_IN = 15
 
 shapes_list = []
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -33,8 +35,21 @@ def super_UI():
     save_drawing_but_bord = pygame.Rect(260, 30, 230, 30)
     pygame.draw.rect(screen, (200,200,200), save_drawing_but_bord)
 
+    wantedFont = pygame.font.SysFont('verdana', 20)
+    title = wantedFont.render("DRAW MACHINE IMAGE", True, (0,0,0))
+
+    title_box = title.get_rect()
+    title_box.center = (SCREEN_WIDTH // 2, 15)
+
+    screen.blit(title, title_box)
+
+def clearLines(players):
+    players.currentNodes = []
+    shapes_list.clear()
+
     #Actual buttons 
 new_screen_but = Button(
+        #Following documentation
         screen,  # Surface to place button on
         10,  # X-coordinate of top left corner
         30,  # Y-coordinate of top left corner
@@ -49,10 +64,26 @@ new_screen_but = Button(
         hoverColour=(100, 150, 150),  # Colour of button when being hovered over
         pressedColour=(100, 200, 200),  # Colour of button when being clicked
         radius=20,  # Radius of border corners (leave empty for not curved)
-        onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
+        onClick=lambda: clearLines(player) # Function to call when clicked on
     )
     
+export_screen_but = Button(
+        screen,  # Surface to place button on
+        260,  # X-coordinate of top left corner
+        30,  # Y-coordinate of top left corner
+        230,  # Width
+        30,  # Height
 
+        # Optional Parameters
+        text='Export',  # Text to display
+        fontSize=20,  # Size of font
+        margin=20,  # Minimum distance between text/image and edge of button
+        inactiveColour=(150,150,150),  # Colour of button when not being interacted with
+        hoverColour=(100, 150, 150),  # Colour of button when being hovered over
+        pressedColour=(100, 200, 200),  # Colour of button when being clicked
+        radius=20,  # Radius of border corners (leave empty for not curved)
+        onClick=lambda: GenCommands.reciever(shapes_list)  # Function to call when clicked on
+    )
 
 class UserPointer():
     def __init__(self):
@@ -116,6 +147,8 @@ while running:
     if(len(player.currentNodes) >= 2):
         pygame.draw.lines(screen, (255, 255, 255), False, player.currentNodes, 10)
     for shape in shapes_list:
+        if len(shape) < 2:
+            continue
         pygame.draw.lines(screen, (255, 255, 0), False, shape, 10)
     if len(player.currentNodes) > 0:
         pygame.draw.line(screen, (255, 255, 255), player.currentNodes[len(player.currentNodes)-1], player.pos, 10)
