@@ -32,6 +32,13 @@ class UserPointer():
 
 player = UserPointer()
 
+def pos_to_snap(pos):
+    ## 35 = 30, 15 = 10
+    ## PX_PER_IN / 2
+    # return pos[0] % 
+    # PX_PER_IN
+    pass
+
 while running:
     # process input
     for event in pygame.event.get():
@@ -59,10 +66,13 @@ while running:
 
     # render
     screen.fill((0, 0, 50))
-    # i, j = 0, 0
-    # while i < SCREEN_WIDTH:
-    #     while j < SCREEN_HEIGHT:
-    #         pass
+    i, j = 0, 0
+    while i < SCREEN_WIDTH:
+        i += PX_PER_IN
+        j = 0
+        while j < SCREEN_HEIGHT:
+            j += PX_PER_IN
+            pygame.draw.circle(screen, (255, 255, 255), (i-PX_PER_IN/2, j-PX_PER_IN/2), 2)
 
     pygame.draw.circle(
         screen,
