@@ -83,6 +83,8 @@ while running:
         pygame.draw.lines(screen, (255, 255, 255), False, player.currentNodes, 10)
     for shape in shapes_list:
         pygame.draw.lines(screen, (255, 255, 0), False, shape, 10)
+    if len(player.currentNodes) > 0:
+        pygame.draw.line(screen, (255, 255, 255), player.currentNodes[len(player.currentNodes)-1], player.pos, 10)
     pygame.display.flip()
     # Aricks Code
     # Git Blame
