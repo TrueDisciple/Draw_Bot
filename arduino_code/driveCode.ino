@@ -1,55 +1,24 @@
-const int StepX = 2;
-const int DirX = 5;
-const int StepY = 3;
-const int DirY = 6;
-const int StepZ = 4;
-const int DirZ = 7;
-const int StepA = 12;
-const int DirA = 13;
-const int SPEED = 10000;
-const int ACCEL = 10000;
-
-#include <AccelStepper.h>
-#include <MultiStepper.h>
 
 
 
-AccelStepper stepperLeft(AccelStepper::DRIVER, 2, 5);
-AccelStepper stepperRight(AccelStepper::DRIVER, 12, 13);
-AccelStepper stepperTop(AccelStepper::DRIVER, 3, 6);
-AccelStepper stepperBottom(AccelStepper::DRIVER, 4, 7);
+
+
 // MultiStepper steppers;
 
-void setup() {
-  stepperLeft.setMaxSpeed(SPEED);
-  stepperLeft.setAcceleration(ACCEL);
-  stepperRight.setMaxSpeed(SPEED);
-  stepperRight.setAcceleration(ACCEL);
-  stepperTop.setMaxSpeed(SPEED);
-  stepperTop.setAcceleration(ACCEL);
-  stepperBottom.setMaxSpeed(SPEED);
-  stepperBottom.setAcceleration(ACCEL);
-
-
-  stepperRight.setPinsInverted(true,false,false);
-  stepperBottom.setPinsInverted(true,false,false);
-
-
-}
 
 
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  // moveUp(5000);
-  // moveLeft(5000);
+// void loop() {
+//   // put your main code here, to run repeatedly:
+//   // moveUp(5000);
+//   // moveLeft(5000);
 
-  moveLinear(0,0);
-  // moveLinear(2000,2000);
-  moveLinear(2000,2000);
-  moveLinear(0,2000);
+//   moveLinear(0,0);
+//   // moveLinear(2000,2000);
+//   moveLinear(2000,2000);
+//   moveLinear(0,2000);
 
-}
+// }
 
 void moveUp(int amount){
   stepperTop.move(amount);
