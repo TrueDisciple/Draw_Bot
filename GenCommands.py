@@ -63,12 +63,17 @@ def genCommands():
     return commands
 
 
-if __name__ == '__main__':
-    # Back up works but is rather slow to enter. Extreamly slow!
-    #uicommands = genCommands()
-    uicommands = randCommands()
-    new_open_file = Wcommands(commands=uicommands)
-    # Commands array order StartX StartY EndX EndY
-    new_open_file.write_file(fileName='test.hack', writeType='w', commands=uicommands)
+def reciever(args):
+    new_open_file = Wcommands(commands=args)
+    new_open_file.write_file(fileName='test.hack', writeType='w', commands=args)
+
+
+# if __name__ == '__main__':
+#     # Back up works but is rather slow to enter. Extreamly slow!
+#     #uicommands = genCommands()
+#     uicommands = randCommands()
+#     new_open_file = Wcommands(commands=uicommands)
+#     # Commands array order StartX StartY EndX EndY
+#     new_open_file.write_file(fileName='test.hack', writeType='w', commands=uicommands)
 
 
