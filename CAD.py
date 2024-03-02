@@ -1,4 +1,7 @@
 import pygame
+import pygame_widgets as pw
+from pygame_widgets.button import Button
+
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -21,6 +24,35 @@ shapes_list = []
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 running = True
 
+def super_UI():
+    topBar = pygame.Rect(0, 0, 500, 70)
+    pygame.draw.rect(screen, (255,255,255), topBar)
+    new_screen_but_bord = pygame.Rect(10, 30, 230, 30)
+    pygame.draw.rect(screen, (200,200,200), new_screen_but_bord)
+    save_drawing_but_bord = pygame.Rect(260, 30, 230, 30)
+    pygame.draw.rect(screen, (200,200,200), save_drawing_but_bord)
+
+    #Actual buttons 
+new_screen_but = Button(
+        screen,  # Surface to place button on
+        10,  # X-coordinate of top left corner
+        30,  # Y-coordinate of top left corner
+        230,  # Width
+        30,  # Height
+
+        # Optional Parameters
+        text='Reset',  # Text to display
+        fontSize=20,  # Size of font
+        margin=20,  # Minimum distance between text/image and edge of button
+        inactiveColour=(150,150,150),  # Colour of button when not being interacted with
+        hoverColour=(100, 150, 150),  # Colour of button when being hovered over
+        pressedColour=(100, 200, 200),  # Colour of button when being clicked
+        radius=20,  # Radius of border corners (leave empty for not curved)
+        onClick=lambda: print('Click')  # Function to call when clicked on
+    )
+    
+
+
 class UserPointer():
     def __init__(self):
         self.pos = pygame.mouse.get_pos()
@@ -34,7 +66,8 @@ player = UserPointer()
 
 while running:
     # process input
-    for event in pygame.event.get():
+    events = pygame.event.get()
+    for event in events:
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 running = False
@@ -74,9 +107,12 @@ while running:
         pygame.draw.lines(screen, (255, 255, 255), False, player.currentNodes, 10)
     for shape in shapes_list:
         pygame.draw.lines(screen, (255, 255, 0), False, shape, 10)
-    pygame.display.flip()
+    
     # Aricks Code
     # Git Blame
+    super_UI()
+    pw.update(events)
+    pygame.display.flip()
+    
 
-    def super_ui():
-        pass
+
